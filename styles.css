@@ -6,9 +6,9 @@
 }
 
 :root {
-    /* Tema único: Negro azabache con acentos dorados */
-    --primary-color: #d4af37;
-    --primary-hover: #f4c842;
+    /* Tema único: Negro azabache con acentos amarillo suave moderno */
+    --primary-color: #fbbf24;
+    --primary-hover: #fcd34d;
     --secondary-color: #000000;
     --background-dark: #000000;
     --background-light: #111111;
@@ -18,22 +18,23 @@
     --text-secondary: #cccccc;
     --text-muted: #888888;
     --border-color: #333333;
-    --accent-purple: #9d4edd;
-    --accent-blue: #4cc9f0;
-    --accent-rose: #f72585;
-    --accent-emerald: #06ffa5;
+    --accent-yellow: #fbbf24;
+    --accent-yellow-light: #fcd34d;
+    --accent-yellow-dark: #f59e0b;
+    --accent-orange: #fb923c;
+    --accent-emerald: #10b981;
 }
 
-/* Gradientes elegantes */
+/* Gradientes elegantes con amarillo suave moderno */
 :root {
-    --gradient-primary: linear-gradient(135deg, #d4af37 0%, #f4c842 100%);
-    --gradient-purple: linear-gradient(135deg, #9d4edd 0%, #c77dff 100%);
-    --gradient-blue: linear-gradient(135deg, #4cc9f0 0%, #7209b7 100%);
-    --gradient-rose: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
-    --gradient-emerald: linear-gradient(135deg, #06ffa5 0%, #4361ee 100%);
-    --gradient-dark: linear-gradient(135deg, #0f0d1a 0%, #1a1625 100%);
-    --gradient-surface: linear-gradient(135deg, #252033 0%, #2d2740 100%);
-    --gradient-luxury: linear-gradient(135deg, #d4af37 0%, #9d4edd 50%, #4cc9f0 100%);
+    --gradient-primary: linear-gradient(135deg, #fbbf24 0%, #fcd34d 100%);
+    --gradient-yellow: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    --gradient-orange: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    --gradient-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-dark: linear-gradient(135deg, #000000 0%, #111111 100%);
+    --gradient-surface: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+    --gradient-luxury: linear-gradient(135deg, #fbbf24 0%, #fb923c 50%, #10b981 100%);
+    --gradient-glow: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 146, 60, 0.2) 100%);
     
     /* Sombras */
     --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -339,9 +340,9 @@ body {
 
 .upload-zone:hover {
     border-color: var(--primary-color);
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(157, 78, 221, 0.1) 50%, rgba(76, 201, 240, 0.1) 100%);
+    background: var(--gradient-glow);
     transform: translateY(-4px);
-    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 8px 32px rgba(251, 191, 36, 0.3);
 }
 
 .upload-zone i {
