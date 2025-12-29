@@ -52,6 +52,7 @@ class MusicPlayer {
         // Volume controls
         this.volumeSlider = document.getElementById('volumeSlider');
         this.muteBtn = document.getElementById('muteBtn');
+        this.volumePercentage = document.getElementById('volumePercentage');
         
         // Track info
         this.currentTrackTitle = document.getElementById('currentTrackTitle');
@@ -69,6 +70,11 @@ class MusicPlayer {
         this.queueSidebar = document.getElementById('queueSidebar');
         this.closeQueue = document.getElementById('closeQueue');
         this.queueContent = document.getElementById('queueContent');
+        
+        // Theme selector
+        this.themeBtn = document.getElementById('themeBtn');
+        this.themeDropdown = document.getElementById('themeDropdown');
+        this.themeOptions = document.querySelectorAll('.theme-option');
     }
 
     bindEvents() {
@@ -109,6 +115,19 @@ class MusicPlayer {
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        
+        // Theme selector
+        this.themeBtn.addEventListener('click', () => this.toggleThemeDropdown());
+        this.themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => this.changeTheme(e.target.closest('.theme-option').dataset.theme));
+        });
+        
+        // Close theme dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.themeBtn.contains(e.target) && !this.themeDropdown.contains(e.target)) {
+                this.themeDropdown.classList.remove('show');
+            }
+        });
     }
 
     setupDragAndDrop() {
@@ -174,16 +193,62 @@ class MusicPlayer {
                 onSuccess: (tag) => {
                     const song = this.createSongObject(file, tag);
                     this.songs.push(song);
-                    resolve();
+                    this.loadSongDuration(song).then(() => resolve());
                 },
                 onError: (error) => {
                     console.warn('Error reading metadata for', file.name, error);
                     // Create song with basic info even if metadata reading fails
                     const song = this.createSongObject(file, null);
                     this.songs.push(song);
-                    resolve();
+                    this.loadSongDuration(song).then(() => resolve());
                 }
             });
+        });
+    }
+
+    async loadSongDuration(song) {
+        return new Promise((resolve) => {
+            const tempAudio = new Audio();
+            tempAudio.preload = 'metadata';
+            
+            const cleanup = () => {
+                tempAudio.removeEventListener('loadedmetadata', onLoaded);
+                tempAudio.removeEventListener('error', onError);
+                tempAudio.removeEventListener('canplaythrough', onLoaded);
+                tempAudio.src = '';
+                tempAudio.load();
+            };
+            
+            const onLoaded = () => {
+                if (tempAudio.duration && !isNaN(tempAudio.duration) && tempAudio.duration !== Infinity) {
+                    song.duration = tempAudio.duration;
+                } else {
+                    song.duration = 0;
+                }
+                cleanup();
+                resolve();
+            };
+            
+            const onError = () => {
+                song.duration = 0;
+                cleanup();
+                resolve();
+            };
+            
+            tempAudio.addEventListener('loadedmetadata', onLoaded);
+            tempAudio.addEventListener('canplaythrough', onLoaded);
+            tempAudio.addEventListener('error', onError);
+            
+            // Timeout fallback
+            setTimeout(() => {
+                if (song.duration === undefined) {
+                    song.duration = 0;
+                    cleanup();
+                    resolve();
+                }
+            }, 3000);
+            
+            tempAudio.src = song.url;
         });
     }
 
@@ -383,6 +448,12 @@ class MusicPlayer {
         document.getElementById('albumYear').textContent = album.year || 'Año desconocido';
         document.getElementById('albumTrackCount').textContent = `${album.songs.length} canción${album.songs.length !== 1 ? 'es' : ''}`;
         
+        // Add event listener for play album button
+        const playAlbumBtn = document.querySelector('.play-album-btn');
+        if (playAlbumBtn) {
+            playAlbumBtn.onclick = () => this.playAlbum(album);
+        }
+        
         // Render album tracks
         const albumTracks = document.getElementById('albumTracks');
         albumTracks.innerHTML = `
@@ -415,6 +486,13 @@ class MusicPlayer {
             
             albumTracks.appendChild(trackItem);
         });
+    }
+
+    playAlbum(album) {
+        if (album.songs.length > 0) {
+            this.playAlbumSong(album, 0);
+            this.showNotification(`Reproduciendo álbum: ${album.name}`, 'success');
+        }
     }
 
     showArtistSongs(artist) {
@@ -570,15 +648,48 @@ class MusicPlayer {
 
     setVolume(value) {
         this.volume = value / 100;
-        this.audio.volume = this.volume;
         
+        // Crear contexto de audio para amplificación si no existe
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.gainNode = this.audioContext.createGain();
+            this.source = this.audioContext.createMediaElementSource(this.audio);
+            this.source.connect(this.gainNode);
+            this.gainNode.connect(this.audioContext.destination);
+        }
+        
+        // Aplicar ganancia (permite hasta 200% = 2.0)
+        this.gainNode.gain.value = this.volume;
+        
+        // Actualizar indicador de porcentaje
+        this.volumePercentage.textContent = `${Math.round(value)}%`;
+        
+        // Marcar como boosted si es mayor a 100%
+        if (value > 100) {
+            this.volumePercentage.classList.add('boosted');
+        } else {
+            this.volumePercentage.classList.remove('boosted');
+        }
+        
+        // Actualizar icono del botón de mute
         const icon = this.muteBtn.querySelector('i');
         if (this.volume === 0) {
             icon.className = 'fas fa-volume-mute';
         } else if (this.volume < 0.5) {
             icon.className = 'fas fa-volume-down';
-        } else {
+        } else if (this.volume <= 1.0) {
             icon.className = 'fas fa-volume-up';
+        } else {
+            // Icono especial para volumen amplificado
+            icon.className = 'fas fa-volume-up';
+            icon.style.color = 'var(--primary-color)';
+        }
+        
+        // Mostrar notificación para volumen amplificado
+        if (value > 100 && !this.lastVolumeNotification || 
+            (this.lastVolumeNotification && Date.now() - this.lastVolumeNotification > 2000)) {
+            this.showNotification(`Volumen amplificado: ${Math.round(value)}%`, 'warning');
+            this.lastVolumeNotification = Date.now();
         }
     }
 
@@ -781,10 +892,52 @@ class MusicPlayer {
         return icons[type] || icons.info;
     }
 
+    // Theme functions
+    toggleThemeDropdown() {
+        this.themeDropdown.classList.toggle('show');
+    }
+
+    changeTheme(theme) {
+        // Remove current theme
+        document.body.removeAttribute('data-theme');
+        
+        // Apply new theme
+        if (theme !== 'luxury') {
+            document.body.setAttribute('data-theme', theme);
+        }
+        
+        // Update active option
+        this.themeOptions.forEach(option => {
+            option.classList.toggle('active', option.dataset.theme === theme);
+        });
+        
+        // Close dropdown
+        this.themeDropdown.classList.remove('show');
+        
+        // Save theme preference
+        localStorage.setItem('luxe-audio-theme', theme);
+        
+        // Show notification
+        const themeNames = {
+            'luxury': 'Luxury Gold',
+            'dark': 'Azabache',
+            'blue': 'Ocean Blue',
+            'purple': 'Royal Purple'
+        };
+        
+        this.showNotification(`Tema cambiado a ${themeNames[theme]}`, 'success');
+    }
+
+    loadSavedTheme() {
+        const savedTheme = localStorage.getItem('luxe-audio-theme') || 'luxury';
+        this.changeTheme(savedTheme);
+    }
+
     // Initialize volume
     init() {
         this.audio.volume = this.volume;
         this.volumeSlider.value = this.volume * 100;
+        this.loadSavedTheme();
     }
 }
 
