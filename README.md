@@ -61,10 +61,10 @@ Un reproductor de música web moderno y sofisticado con diseño minimalista en n
 
 ```
 music-player/
-├── index.html          # Estructura principal
-├── styles.css          # Estilos y diseño
-├── script.js           # Lógica de la aplicación
-└── README.md           # Documentación
+├── index.html          # Estructura principal con favicon y meta tags
+├── styles.css          # Estilos y diseño con paleta amarillo suave
+├── script.js           # Lógica de la aplicación con Web Audio API
+└── README.md           # Documentación completa
 ```
 
 ## 🛠️ **Instalación y Uso**
