@@ -6,7 +6,7 @@
 }
 
 :root {
-    /* Fondo siempre negro azabache - Solo cambian colores de botones */
+    /* Tema único: Negro azabache con acentos dorados */
     --primary-color: #d4af37;
     --primary-hover: #f4c842;
     --secondary-color: #000000;
@@ -22,30 +22,6 @@
     --accent-blue: #4cc9f0;
     --accent-rose: #f72585;
     --accent-emerald: #06ffa5;
-}
-
-/* Tema Dorado */
-[data-theme="luxury"] {
-    --primary-color: #d4af37;
-    --primary-hover: #f4c842;
-}
-
-/* Tema Azul */
-[data-theme="blue"] {
-    --primary-color: #0ea5e9;
-    --primary-hover: #38bdf8;
-}
-
-/* Tema Púrpura */
-[data-theme="purple"] {
-    --primary-color: #a855f7;
-    --primary-hover: #c084fc;
-}
-
-/* Tema Verde */
-[data-theme="green"] {
-    --primary-color: #10b981;
-    --primary-hover: #34d399;
 }
 
 /* Gradientes elegantes */
@@ -309,96 +285,19 @@ body {
     color: var(--text-muted);
 }
 
-/* Theme Selector */
-.theme-selector {
-    position: relative;
+/* Player Title */
+.player-title {
+    flex: 1;
+    text-align: center;
 }
 
-.theme-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--surface-color);
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.theme-btn:hover {
-    background: var(--border-color);
-    color: var(--text-primary);
-}
-
-.theme-dropdown {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background: var(--surface-color);
-    border-radius: var(--radius-medium);
-    padding: 8px;
-    box-shadow: var(--shadow-large);
-    min-width: 180px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: var(--transition-fast);
-    z-index: 1000;
-}
-
-.theme-dropdown.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.theme-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: var(--radius-small);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.theme-option:hover {
-    background: var(--surface-hover);
-}
-
-.theme-option.active {
-    background: var(--primary-color);
-    color: white;
-}
-
-.theme-preview {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.luxury-preview {
-    background: linear-gradient(135deg, #d4af37 0%, #9d4edd 100%);
-}
-
-.dark-preview {
-    background: linear-gradient(135deg, #000000 0%, #d4af37 100%);
-}
-
-.blue-preview {
-    background: linear-gradient(135deg, #0ea5e9 0%, #1e293b 100%);
-}
-
-.purple-preview {
-    background: linear-gradient(135deg, #a855f7 0%, #1e1b2e 100%);
-}
-
-.green-preview {
-    background: linear-gradient(135deg, #10b981 0%, #064e3b 100%);
+.player-title h2 {
+    font-size: 20px;
+    font-weight: 600;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Content Area */
