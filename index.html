@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe Audio - Reproductor Elegante</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-gem"></i>
+            <h1>Luxe Audio</h1>
+        </div>
+            
+            <nav class="nav-menu">
+                <ul>
+                    <li class="nav-item active">
+                        <i class="fas fa-home"></i>
+                        <span>Inicio</span>
+                    </li>
+                    <li class="nav-item">
+                        <i class="fas fa-search"></i>
+                        <span>Buscar</span>
+                    </li>
+                    <li class="nav-item">
+                        <i class="fas fa-list"></i>
+                        <span>Tu biblioteca</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="library-section">
+                <h3>Tu música</h3>
+                <div class="file-upload">
+                    <input type="file" id="fileInput" multiple accept="audio/mp3,audio/mpeg" style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-plus"></i>
+                        Agregar música
+                    </button>
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">Todas</button>
+                    <button class="filter-tab" data-filter="artists">Artistas</button>
+                    <button class="filter-tab" data-filter="albums">Álbumes</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="navigation-buttons">
+                    <button class="nav-btn" id="backBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-btn" id="forwardBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar canciones, artistas o álbumes..." id="searchInput">
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="welcome-section" id="welcomeSection">
+                    <h2>Bienvenido a Luxe Audio</h2>
+                    <p>Experimenta la música con elegancia y sofisticación</p>
+                    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Arrastra y suelta tus archivos MP3 aquí</h3>
+                        <p>o haz clic para seleccionar archivos</p>
+                    </div>
+                </div>
+
+                <div class="music-library" id="musicLibrary" style="display: none;">
+                    <div class="library-header">
+                        <h2>Tu biblioteca</h2>
+                        <div class="view-options">
+                            <button class="view-btn active" data-view="grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="content-grid" id="contentGrid">
+                        <!-- Albums Grid -->
+                        <div class="albums-grid" id="albumsGrid"></div>
+                        
+                        <!-- Artists Grid -->
+                        <div class="artists-grid" id="artistsGrid"></div>
+                        
+                        <!-- Songs List -->
+                        <div class="songs-list" id="songsList"></div>
+                    </div>
+                </div>
+
+                <!-- Album Detail View -->
+                <div class="album-detail" id="albumDetail" style="display: none;">
+                    <div class="album-header">
+                        <div class="album-cover">
+                            <img id="albumCoverLarge" src="" alt="Album Cover">
+                        </div>
+                        <div class="album-info">
+                            <span class="album-type">ÁLBUM</span>
+                            <h1 id="albumTitle"></h1>
+                            <div class="album-meta">
+                                <span id="albumArtist"></span>
+                                <span class="separator">•</span>
+                                <span id="albumYear"></span>
+                                <span class="separator">•</span>
+                                <span id="albumTrackCount"></span>
+                            </div>
+                            <div class="album-actions">
+                                <button class="play-album-btn">
+                                    <i class="fas fa-play"></i>
+                                    Reproducir
+                                </button>
+                                <button class="shuffle-btn">
+                                    <i class="fas fa-random"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="album-tracks" id="albumTracks"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Now Playing Bar -->
+        <footer class="now-playing-bar">
+            <div class="track-info">
+                <div class="track-cover">
+                    <img id="currentTrackCover" src="" alt="Track Cover">
+                </div>
+                <div class="track-details">
+                    <div class="track-title" id="currentTrackTitle">Selecciona una canción</div>
+                    <div class="track-artist" id="currentTrackArtist"></div>
+                </div>
+                <button class="like-btn">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="player-controls">
+                <div class="control-buttons">
+                    <button class="control-btn" id="shuffleBtn">
+                        <i class="fas fa-random"></i>
+                    </button>
+                    <button class="control-btn" id="prevBtn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-pause-btn" id="playPauseBtn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn" id="nextBtn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="control-btn" id="repeatBtn">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+                <div class="progress-bar">
+                    <span class="time-current" id="currentTime">0:00</span>
+                    <div class="progress-container">
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <div class="progress-handle" id="progressHandle"></div>
+                        </div>
+                    </div>
+                    <span class="time-total" id="totalTime">0:00</span>
+                </div>
+            </div>
+
+            <div class="volume-controls">
+                <button class="control-btn" id="muteBtn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <div class="volume-slider">
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                </div>
+                <button class="control-btn" id="queueBtn">
+                    <i class="fas fa-list-ul"></i>
+                </button>
+            </div>
+        </footer>
+
+        <!-- Queue Sidebar -->
+        <div class="queue-sidebar" id="queueSidebar">
+            <div class="queue-header">
+                <h3>Cola de reproducción</h3>
+                <button class="close-queue" id="closeQueue">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="queue-content" id="queueContent">
+                <p class="queue-empty">No hay canciones en la cola</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
